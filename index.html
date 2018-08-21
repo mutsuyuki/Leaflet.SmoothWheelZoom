@@ -1,0 +1,41 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.js"></script>
+    <script src="./SmoothWheelZoom.js"></script>
+    <title>smooth zoom demo</title>
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #mapid {
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
+<body>
+
+<div id="mapid"></div>
+
+<script>
+    var mymap = L.map('mapid', {
+        scrollWheelZoom: false,
+        smoothWheelZoom: true,
+        smoothSensitivity: 1,
+
+    }).setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+
+    mymap.on("zoom", function () {
+        console.log("on zoom : ", mymap.getZoom());
+    })
+</script>
+</body>
+</html>
