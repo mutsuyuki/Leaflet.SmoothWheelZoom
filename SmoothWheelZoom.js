@@ -67,6 +67,7 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
     _onWheelEnd: function (e) {
         this._isWheeling = false;
         cancelAnimationFrame(this._zoomAnimationId);
+        this._map._moveEnd(true);
     },
 
     _updateWheelZoom: function () {
