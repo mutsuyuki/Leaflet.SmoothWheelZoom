@@ -54,7 +54,7 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
     _onWheeling: function (e) {
         var map = this._map;
 
-        this._goalZoom = this._goalZoom - e.deltaY * 0.003 * map.options.smoothSensitivity;
+        this._goalZoom = this._goalZoom + L.DomEvent.getWheelDelta(e) * 0.003 * map.options.smoothSensitivity;
         if (this._goalZoom < map.getMinZoom() || this._goalZoom > map.getMaxZoom()) {
             this._goalZoom = map._limitZoom(this._goalZoom);
         }
