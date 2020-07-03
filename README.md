@@ -1,5 +1,6 @@
 # Leaflet.SmoothWheelZoom
-smooth wheel zoom for leaflet
+smooth wheel zoom for leaflet.
+This plugin provide smooth zoom ux like Google map.
 
 ### Usage
 
