@@ -16,11 +16,11 @@ L.Map.mergeOptions({
 L.Map.SmoothWheelZoom = L.Handler.extend({
 
     addHooks: function () {
-        L.DomEvent.on(this._map._container, 'mousewheel', this._onWheelScroll, this);
+        L.DomEvent.on(this._map._container, 'wheel', this._onWheelScroll, this);
     },
 
     removeHooks: function () {
-        L.DomEvent.off(this._map._container, 'mousewheel', this._onWheelScroll, this);
+        L.DomEvent.off(this._map._container, 'wheel', this._onWheelScroll, this);
     },
 
     _onWheelScroll: function (e) {
