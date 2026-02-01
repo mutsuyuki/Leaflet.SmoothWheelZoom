@@ -1,0 +1,23 @@
+{
+  "name": "leaflet-smooth-zoom",
+  "version": "0.1.0",
+  "description": "Smooth wheel zoom plugin for leaflet. This plugin provides smooth zoom UX like Google map.",
+  "main": "SmoothWheelZoom.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "start": "open index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Agriculture-Intelligence/leaflet-smooth-zoom.git"
+  },
+  "keywords": [
+    "leaflet",
+    "plugin",
+    "zoom",
+    "smooth",
+    "wheel"
+  ],
+  "license": "MIT"
+}
