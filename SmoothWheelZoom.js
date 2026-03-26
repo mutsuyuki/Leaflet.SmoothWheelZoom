@@ -36,7 +36,7 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
         this._wheelMousePosition = map.mouseEventToContainerPoint(e);
         this._centerPoint = map.getSize()._divideBy(2);
         this._startLatLng = map.containerPointToLatLng(this._centerPoint);
-        this._wheelStartLatLng = map.containerPointToLatLng(this._wheelMousePosition);
+        this._wheelMouseLatLng = map.containerPointToLatLng(this._wheelMousePosition);
         this._startZoom = map.getZoom();
         this._moved = false;
         this._zooming = true;
@@ -54,11 +54,34 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
     _onWheeling: function (e) {
         var map = this._map;
 
-        this._goalZoom = this._goalZoom + L.DomEvent.getWheelDelta(e) * 0.003 * map.options.smoothSensitivity;
+        var value = e.deltaY || e.detail || e.wheelDelta || 0;
+        var step = 0;
+
+        if (e.type === 'DOMMouseScroll') {
+            step = -value * 20;
+        } else if (e.type === 'wheel') {
+            step = -value;
+            if (e.deltaMode === 1) { // DOM_DELTA_LINE
+                step *= 33.3; // Firefox typically gives 3 for a single notch. 3 * 33.3 = ~100.
+            } else if (e.deltaMode === 2) { // DOM_DELTA_PAGE
+                step *= 100;
+            }
+        } else if (e.type === 'mousewheel') {
+            step = value / 1.2;
+        } else {
+            step = L.DomEvent.getWheelDelta(e); // Fallback to Leaflet's calculation
+        }
+
+        if (!step) {
+            return;
+        }
+
+        this._goalZoom = this._goalZoom + step * 0.003 * map.options.smoothSensitivity;
         if (this._goalZoom < map.getMinZoom() || this._goalZoom > map.getMaxZoom()) {
             this._goalZoom = map._limitZoom(this._goalZoom);
         }
         this._wheelMousePosition = this._map.mouseEventToContainerPoint(e);
+        this._wheelMouseLatLng = map.containerPointToLatLng(this._wheelMousePosition);
 
         clearTimeout(this._timeoutId);
         this._timeoutId = setTimeout(this._onWheelEnd.bind(this), 200);
@@ -71,6 +94,9 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
         this._isWheeling = false;
         cancelAnimationFrame(this._zoomAnimationId);
         this._map._moveEnd(true);
+        if (this._map.options.zoomAnimation) {
+            this._map.fire('zoomend');
+        }
     },
 
     _updateWheelZoom: function () {
@@ -89,7 +115,7 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
         if (map.options.smoothWheelZoom === 'center') {
             this._center = this._startLatLng;
         } else {
-            this._center = map.unproject(map.project(this._wheelStartLatLng, this._zoom).subtract(delta), this._zoom);
+            this._center = map.unproject(map.project(this._wheelMouseLatLng, this._zoom).subtract(delta), this._zoom);
         }
 
         if (!this._moved) {
@@ -98,6 +124,15 @@ L.Map.SmoothWheelZoom = L.Handler.extend({
         }
 
         map._move(this._center, this._zoom);
+
+        if (map.options.zoomAnimation) {
+            map.fire('zoomanim', {
+                center: this._center,
+                zoom: this._zoom,
+                noUpdate: true
+            });
+        }
+
         this._prevCenter = map.getCenter();
         this._prevZoom = map.getZoom();
 
